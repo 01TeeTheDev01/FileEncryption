@@ -1,6 +1,6 @@
 package com.main;
 
-import com.initiators.EncryptionActivity;
+import com.initiators.EncryptionPrompt;
 import com.services.EncryptionService;
 import com.services.IEncryptionService;
 
@@ -15,8 +15,7 @@ public class Main {
         //Init pane
         JOptionPane jOpt = new JOptionPane();
 
-        //Execute actions
-        EncryptionActivity.encryptFiles(encryptionService, jOpt);
-        EncryptionActivity.decryptFiles(encryptionService, jOpt);
+        //Execute
+        EncryptionPrompt.encryptionPromptActivity(encryptionService, jOpt);
     }
 }
