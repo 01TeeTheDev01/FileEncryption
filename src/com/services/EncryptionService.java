@@ -2,9 +2,11 @@ package com.services;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.util.Arrays;
 
@@ -76,12 +78,24 @@ public class EncryptionService implements IEncryptionService {
             SecretKeySpec secretKey = generateSecretKey(key);
 
             Cipher cipher = Cipher.getInstance(ALGORITHM);
+
             cipher.init(Cipher.ENCRYPT_MODE, secretKey);
 
             inputStream = new FileInputStream(inputFile);
-            outputStream = new FileOutputStream(outputFile);
+
+            File newFile = new File(inputFile);
+
+            String path = newFile.getParentFile().getPath();
+
+            String os = System.getProperty("os.name").toLowerCase();
+
+            if(os.equals("mac os x") || os.equals("linux"))
+                outputStream = new FileOutputStream(path + "/" +outputFile);
+            else if(os.equals("windows"))
+                outputStream = new FileOutputStream(path + "\\" +outputFile);
 
             byte[] buffer = new byte[1024];
+
             int bytesRead;
 
             while ((bytesRead = inputStream.read(buffer)) != -1) {
@@ -90,11 +104,15 @@ public class EncryptionService implements IEncryptionService {
             }
 
             byte[] encryptedBytes = cipher.doFinal();
+
             outputStream.write(encryptedBytes);
 
             inputStream.close();
+
             outputStream.close();
-            return true;
+
+            return newFile.delete();
+
         } catch (Exception e) {
             System.out.printf(MESSAGE, e.getMessage());
             return false;
@@ -137,12 +155,24 @@ public class EncryptionService implements IEncryptionService {
             SecretKeySpec secretKey = generateSecretKey(key);
 
             Cipher cipher = Cipher.getInstance(ALGORITHM);
+
             cipher.init(Cipher.DECRYPT_MODE, secretKey);
 
             inputStream = new FileInputStream(inputFile);
-            outputStream = new FileOutputStream(outputFile);
+
+            File newFile = new File(inputFile);
+
+            String path = newFile.getParentFile().getPath();
+
+            String os = System.getProperty("os.name").toLowerCase();
+
+            if(os.equals("mac os x") || os.equals("linux"))
+                outputStream = new FileOutputStream(path + "/" +outputFile);
+            else if(os.equals("windows"))
+                outputStream = new FileOutputStream(path + "\\" +outputFile);
 
             byte[] buffer = new byte[1024];
+
             int bytesRead;
 
             while ((bytesRead = inputStream.read(buffer)) != -1) {
@@ -151,13 +181,18 @@ public class EncryptionService implements IEncryptionService {
             }
 
             byte[] decryptedBytes = cipher.doFinal();
+
             outputStream.write(decryptedBytes);
 
             inputStream.close();
+
             outputStream.close();
-            return true;
+
+            return newFile.delete();
+
         } catch (Exception e) {
             System.out.printf(MESSAGE, e.getMessage());
+
             return false;
         }
     }

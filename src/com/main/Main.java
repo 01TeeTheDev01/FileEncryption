@@ -12,10 +12,7 @@ public class Main {
         //Init service
         IEncryptionService encryptionService = new EncryptionService();
 
-        //Init pane
-        JOptionPane jOpt = new JOptionPane();
-
         //Execute
-        EncryptionPrompt.encryptionPromptActivity(encryptionService, jOpt);
+        EncryptionPrompt.encryptionPromptActivity(encryptionService, new JOptionPane());
     }
 }
